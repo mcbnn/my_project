@@ -31,20 +31,23 @@ class AuthorController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param $id
      * @Route("/edit_author/{id}", name="edit_author", requirements={"id"="\d+"})
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction(Request $request, $id)
     {
-        $em = $this->getEntityManager();
         $obj = $this->getEntity($id);
         if (!$obj) {
             throw $this->createNotFoundException('Автор не найден');
         }
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->getEntityManager();
         $form = $this->createForm(AuthorForm::class, $obj);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-
             return $this->redirectToRoute('authors');
         }
 
@@ -58,6 +61,8 @@ class AuthorController extends Controller
     }
 
     /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @Route("/del_author/{id}", name="del_author", requirements={"id"="\d+"})
      */
     public function delAction($id)
@@ -66,7 +71,8 @@ class AuthorController extends Controller
         if (!$obj) {
             throw $this->createNotFoundException('Автор не найден');
         }
-        $em = $this->getDoctrine()->getEntityManager();
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->getEntityManager();
         $em->remove($obj);
         $em->flush();
 
@@ -74,6 +80,8 @@ class AuthorController extends Controller
     }
 
     /**
+     * @param int $page
+     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/authors/{page}", name="authors", requirements={"page"="\d+"})
      */
     public function getListAction($page = 1)
@@ -96,6 +104,8 @@ class AuthorController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("/add_author", name="add_author")
      */
     public function addAction(Request $request)
@@ -121,17 +131,16 @@ class AuthorController extends Controller
     }
 
     /**
-     * Returns an entity from its ID, or FALSE in case of error.
+     * @param $id
      *
-     * @param int $id
-     *
-     * @return Object|boolean
+     * @return bool|null|object
      */
     protected function getEntity($id)
     {
         try {
-            return $this->getEntityManager()
-                ->getRepository(Author::class)
+            /** @var \Doctrine\ORM\EntityManager $em */
+            $em = $this->getEntityManager();
+            return $em->getRepository(Author::class)
                 ->find($id);
         } catch (Exception $e) {
             return false;

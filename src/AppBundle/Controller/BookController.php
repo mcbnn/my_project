@@ -10,6 +10,11 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Class BookController
+ *
+ * @package AppBundle\Controller
+ */
 class BookController extends Controller
 {
     /**
@@ -30,6 +35,8 @@ class BookController extends Controller
     }
 
     /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/show_book/{id}", name="show_book", requirements={"id"="\d+"})
      */
     public function showAction($id)
@@ -49,33 +56,33 @@ class BookController extends Controller
     }
 
     /**
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @Route("/del_book/{id}", name="del_book", requirements={"id"="\d+"})
      */
     public function delAction($id)
     {
         $obj = $this->getEntity($id);
-        $em = $this->getEntityManager();
-
         if (!$obj) {
             throw $this->createNotFoundException('Книга не найдена');
         }
-
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->getEntityManager();
         $authors = $em->getRepository('AppBundle\Entity\Author')->findBy(
             ['book_id' => $id]
         );
         if ($authors) {
             foreach ($authors as $author) {
+                /** @var \AppBundle\Entity\Author $author */
                 $author->setBookId(null);
             }
         }
-
         if ($obj->getFoto()) {
             $foto = $this->getParameter('brochures_directory')
                 .'/'
                 .$obj->getFoto();
             unlink($foto);
         }
-
         $em->remove($obj);
         $em->flush();
 
@@ -83,6 +90,8 @@ class BookController extends Controller
     }
 
     /**
+     * @param int $page
+     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/books/{page}", name="books", requirements={"page"="\d+"})
      */
     public function getListAction($page = 1)
@@ -105,22 +114,25 @@ class BookController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param         $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("/edit_book/{id}", name="edit_book", requirements={"id"="\d+"})
      */
     public function editAction(Request $request, $id)
     {
-        $em = $this->getEntityManager();
+
         $obj = $this->getEntity($id);
         if (!$obj) {
             throw $this->createNotFoundException('Книга не найдена');
         }
-
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $this->getEntityManager();
         $form = $this->createForm(BookForm::class, $obj);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $book = $form->getData();
-
+            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $book->getAttachment();
             if ($file) {
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();;
@@ -130,11 +142,10 @@ class BookController extends Controller
                 );
                 $book->setFoto($fileName);
             }
-
             foreach ($form->getData()->getAuthors() as $author) {
+                /** @var \AppBundle\Entity\Author $author */
                 $author->setBookId($book);
             }
-
             $em->flush();
 
             return $this->redirectToRoute('books');
@@ -149,16 +160,19 @@ class BookController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("/add_book", name="add_book")
      */
     public function addAction(Request $request)
     {
         $form = $this->createForm(BookForm::class);
         $form->handleRequest($request);
+        /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->getEntityManager();
         if ($form->isSubmitted() && $form->isValid()) {
             $book = $form->getData();
-
+            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $book->getAttachment();
             if ($file) {
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();;
@@ -169,8 +183,8 @@ class BookController extends Controller
                 $book->setFoto($fileName);
             }
             $em->persist($book);
-
             foreach ($form->getData()->getAuthors() as $author) {
+                /** @var \AppBundle\Entity\Author $author */
                 $author->setBookId($book);
             }
             $em->flush();
@@ -187,16 +201,16 @@ class BookController extends Controller
     }
 
     /**
-     * Returns an entity from its ID, or FALSE in case of error.
+     * @param $id
      *
-     * @param int $id
-     *
-     * @return Object|boolean
+     * @return bool|null|object
      */
     protected function getEntity($id)
     {
         try {
-            return $this->getEntityManager()->getRepository(Book::class)->find(
+            /** @var \Doctrine\ORM\EntityManager $em */
+            $em = $this->getEntityManager();
+            return $em->getRepository(Book::class)->find(
                     $id
                 );
         } catch (Exception $e) {
