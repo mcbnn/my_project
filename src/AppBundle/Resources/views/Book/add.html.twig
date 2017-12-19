@@ -1,0 +1,13 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Добавить Книгу{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.year) }}
+    {{ form_row(form.isbn) }}
+    {{ form_row(form.count_pages)  }}
+    {{ form_widget(form.authors, { 'separator': '=====' }) }}
+    {{ form_end(form) }}
+{% endblock %}

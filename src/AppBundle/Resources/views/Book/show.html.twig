@@ -1,0 +1,27 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Книга {{ book.name }}{% endblock %}
+
+{% block body %}
+    <ul>
+        <li>Книга : {{ book.name }}</li>
+        <li>Год : {{ book.year }}</li>
+        <li>ISBN : {{ book.isbn }}</li>
+        <li>Кол.во страниц : {{ book.countPages }}</li>
+        <li>Фото :
+            {% if(book.foto is not null) %}
+                <img src="/uploads/{{ book.foto }}"/>
+            {% else %}
+                Изображение отсутсвует
+            {% endif %}
+        </li>
+        <li>Автор :
+            {% for author in book.authors %}
+                {{ author.surname }}
+                {{ author.name|first }}.
+                {{ author.patronymic|first }} /
+            {% endfor %}
+
+        </li>
+    </ul>
+{% endblock %}

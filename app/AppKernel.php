@@ -39,7 +39,7 @@ class AppKernel extends Kernel
 
             new Symfony\Cmf\Bundle\MenuBundle\CmfMenuBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
-
+            new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             // Application bundles
             new AppBundle\AppBundle(),
         ];

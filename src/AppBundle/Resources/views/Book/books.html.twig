@@ -1,0 +1,48 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Список Книг{% endblock %}
+
+{% block body %}
+    <h1>Список Книг</h1>
+    {% include "AppBundle:Book:menu.html.twig" %}
+    <div class="count">
+        {{ pagination.getTotalItemCount }}
+    </div>
+    <table>
+        <tr>
+             sorting of properties based on query components
+            <th>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</th>
+            <th{% if pagination.isSorted('name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'name', 'name') }}</th>
+            <th{% if pagination.isSorted('year') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'year', 'year') }}</th>
+            <th{% if pagination.isSorted('isbn') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'isbn', 'isbn') }}</th>
+            <th{% if pagination.isSorted('count_pages') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'count_pages', 'count_pages') }}</th>
+            <th{% if pagination.isSorted('foto') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'foto', 'foto') }}</th>
+            <th></th>
+        </tr>
+
+         table body
+        {% for book in pagination %}
+            <tr {% if loop.index is odd %}class="color"{% endif %}>
+                <td>{{ book.id }}</td>
+                <td>{{ book.name }}</td>
+                <td>{{ book.year }}</td>
+                <td>{{ book.isbn }}</td>
+                <td>{{ book.countPages }}</td>
+                <td>
+                    {% if  book.foto is not null %}
+                        <img src = "/uploads/{{ book.foto }}" />
+                    {% endif %}
+                    </td>
+                <td>
+                    <a href = "{{ url('show_book', {'id' : book.id}  ) }}">Карточка</a>
+                    <a href = "{{ url('del_book', {'id' : book.id}  ) }}">Удалить</a>
+                    <a href = "{{ url('edit_book', {'id' : book.id} ) }}">Редактировать</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+     display navigation
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

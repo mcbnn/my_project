@@ -1,0 +1,17 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Редактировать книгу{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.year) }}
+    {{ form_row(form.isbn) }}
+    {{ form_row(form.count_pages) }}
+    {{ form_widget(form.authors, { 'separator': '=====' }) }}
+    {{ form_widget(form.foto) }}
+    {% if  form.vars.value.foto is not null %}
+        <img src="/uploads/{{ form.vars.value.foto }}"/>
+    {% endif %}
+    {{ form_end(form) }}
+{% endblock %}
