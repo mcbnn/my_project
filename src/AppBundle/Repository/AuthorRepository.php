@@ -10,5 +10,9 @@ namespace AppBundle\Repository;
  */
 class AuthorRepository extends \Doctrine\ORM\EntityRepository
 {
-
+    public function getAuthors()
+    {
+        return $this->createQueryBuilder('author')
+            ->orderBy('author.surname', 'ASC');
+    }
 }

@@ -1,0 +1,41 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Список Авторов{% endblock %}
+
+{% block body %}
+    <h1>Список Авторов</h1>
+    {% include "AppBundle:Author:menu.html.twig" %}
+    <div class="count">
+        {{ pagination.getTotalItemCount }}
+    </div>
+    <table>
+        <tr>
+            {# sorting of properties based on query components #}
+            <th>{{ knp_pagination_sortable(pagination, 'Id', 'id') }}</th>
+            <th{% if pagination.isSorted('name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'name', 'name') }}</th>
+            <th></th>
+        </tr>
+
+        {# table body #}
+        {% for author in pagination %}
+            <tr {% if loop.index is odd %}class="color"{% endif %}>
+                <td>{{ author.id }}</td>
+                <td>
+                    {{ author.surname }}
+                    {{ author.name|first }}.
+                    {{ author.patronymic|first }}.
+                </td>
+                <td>
+                    <a href="{{ url('del_author', {'id' : author.id}  ) }}">Удалить</a>
+                    <a href="{{ url('edit_author', {'id' : author.id} ) }}">Редактировать</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {# display navigation #}
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+
+{% endblock %}

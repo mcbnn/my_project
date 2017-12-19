@@ -1,0 +1,5 @@
+AppBundle\Entity\Author:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [name]
+            message: "Такое автор уже существует"
