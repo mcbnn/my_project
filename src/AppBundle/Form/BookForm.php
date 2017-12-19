@@ -31,7 +31,7 @@ class BookForm extends AbstractType
                  'query_builder' => function (AuthorRepository $er) {
                      return $er->getAuthors();
                  },
-                 'choice_label' => 'surname',
+                 'choice_label' => 'FIO',
                  'multiple' => true,
                  'required' => false
              ])
