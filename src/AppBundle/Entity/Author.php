@@ -137,9 +137,12 @@ class Author
         $this->patronymic = $patronymic;
     }
 
+    /**
+     * @return string
+     */
     public function getFIO()
     {
-        return $this->surname.' '.$this->name[0].'. '.$this->patronymic[0].'.';
+        return $this->surname.' '.$this->name.'. '.$this->patronymic;
     }
 
 }
