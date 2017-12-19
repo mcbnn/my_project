@@ -142,7 +142,7 @@ class Author
      */
     public function getFIO()
     {
-        return $this->surname.' '.$this->name.'. '.$this->patronymic;
+        return $this->surname.' '.$this->name.' '.$this->patronymic;
     }
 
 }
